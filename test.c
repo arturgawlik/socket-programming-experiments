@@ -4,6 +4,7 @@
 #include <netdb.h>
 #include <string.h>
 #include <stdio.h>
+#include <errno.h>
 
 #include <arpa/inet.h>
 
@@ -87,8 +88,43 @@ int make_dns_lookup() {
     return result;
 }
 
+int socket_test() {
+    struct addrinfo hints;
+    struct addrinfo *results;
+
+    memset(&hints, 0, sizeof hints);
+
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_PASSIVE; // my IP
+
+    int getaddrinfoResult = getaddrinfo(NULL, "3490", &hints, &results);
+    if (getaddrinfoResult != 0) {
+        const char* error = gai_strerror(getaddrinfoResult);
+        printf("%s\n", error);
+        return getaddrinfoResult;
+    }
+    
+    int fd = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
+    if (fd == -1) {
+        const char* error = strerror(errno);
+        printf("%s\n", error);
+        return getaddrinfoResult;
+    }
+
+    int bindResult = bind(fd, results->ai_addr, results->ai_addrlen);
+    if (bindResult == -1) {
+        const char* error = strerror(errno);
+        printf("%s\n", error);
+        return getaddrinfoResult;
+    }
+    
+    return 0;
+}
+
 int main() {
     human_to_machine();
     machine_to_human();
     make_dns_lookup();
+    socket_test();
 }
