@@ -200,7 +200,7 @@ int accept_test() {
         return bind_result;
     }
 
-    int listenResult = listen(socket_fd, 10);
+    int listenResult = listen(socket_fd, 1000);
     if (listenResult == -1) {
         const char* error = strerror(errno);
         printf("%s\n", error);
@@ -210,11 +210,14 @@ int accept_test() {
     struct sockaddr_storage their_addr;
     socklen_t addr_size = sizeof their_addr;
     int connected_fd = accept(socket_fd, (struct sockaddr*)&their_addr, &addr_size);
-    if (connected_fd) {
+    if (connected_fd == -1) {
         const char* error = strerror(errno);
         printf("%s\n", error);
         return connected_fd;
     }
+
+    const char* msg_to_send = "hello from the other side.";
+    send(connected_fd, msg_to_send, strlen(msg_to_send), 0);
 
     return 0;
 }
