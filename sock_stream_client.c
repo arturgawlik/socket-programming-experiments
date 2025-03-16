@@ -7,6 +7,7 @@
 #include <errno.h>
 
 #include <arpa/inet.h>
+#include <unistd.h>
 
 int get_socket(const char* address, struct addrinfo** results, char* port) {
     struct addrinfo hints;
@@ -42,7 +43,6 @@ int main() {
     
     int socket_fd = get_socket(NULL, &addr, "5001");
 
-
     int connectResult = connect(socket_fd, addr->ai_addr, addr->ai_addrlen);
     if (connectResult == -1) {
         const char* error = strerror(errno);
@@ -62,6 +62,8 @@ int main() {
 
     printf("received bytes: %n\n", &bytes_received);
     printf("received msg: %s\n", buffer);
+
+    close(socket_fd);
 
     return 0;
 }

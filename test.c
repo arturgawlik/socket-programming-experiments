@@ -7,6 +7,7 @@
 #include <errno.h>
 
 #include <arpa/inet.h>
+#include <unistd.h>
 
 /*
     converts IPv4 address from human format to machine format
@@ -148,6 +149,8 @@ int socket_test() {
         return bindResult;
     }
 
+    close(socketfd);
+
     return 0;
 }
 
@@ -162,6 +165,8 @@ int connect_test() {
         printf("%s\n", error);
         return connectResult;
     }
+
+    close(socket_fd);
 
     return 0;
 }
@@ -184,6 +189,8 @@ int listen_test() {
         printf("%s\n", error);
         return listenResult;
     }
+
+    close(socket_fd);
 
     return 0;
 }
@@ -218,6 +225,9 @@ int accept_test() {
 
     const char* msg_to_send = "hello from the other side.";
     send(connected_fd, msg_to_send, strlen(msg_to_send), 0);
+
+    close(connected_fd);
+    close(socket_fd);
 
     return 0;
 }

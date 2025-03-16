@@ -7,6 +7,7 @@
 #include <errno.h>
 
 #include <arpa/inet.h>
+#include <unistd.h>
 
 int get_socket(const char* address, struct addrinfo** results, char* port) {
     struct addrinfo hints;
@@ -62,6 +63,8 @@ int main() {
 
     printf("received bytes: %n\n", &bytes_received);
     printf("received msg: %s\n", buffer);
+
+    close(socket_fd);
 
     return 0;
 }

@@ -7,6 +7,7 @@
 #include <errno.h>
 
 #include <arpa/inet.h>
+#include <unistd.h>
 
 int get_socket(const char* address, struct addrinfo** results, char* port) {
     struct addrinfo hints;
@@ -54,6 +55,8 @@ int main() {
     if (bytes_send != msg_to_send_len) {
         printf("not all bytes were send by 'send' syscall. Bytes send to send: %n and bytes actually send: %n \n", &bytes_send, &msg_to_send_len);
     }
+
+    close(socket_fd);
 
     return 0;
 }

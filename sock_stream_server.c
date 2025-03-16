@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
+#include <unistd.h>
 
 #include <arpa/inet.h>
 
@@ -76,6 +77,9 @@ int main() {
     if (bytes_send != msg_to_send_len) {
         printf("not all bytes were send by 'send' syscall. Bytes send to send: %n and bytes actually send: %n \n", &bytes_send, &msg_to_send_len);
     }
+
+    close(connected_fd);
+    close(socket_fd);
 
     return 0;
 }
