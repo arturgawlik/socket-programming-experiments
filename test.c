@@ -9,6 +9,8 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+#include <stdlib.h>
+
 /*
     converts IPv4 address from human format to machine format
 */
@@ -207,11 +209,11 @@ int accept_test() {
         return bind_result;
     }
 
-    int listenResult = listen(socket_fd, 1000);
-    if (listenResult == -1) {
+    int listen_result = listen(socket_fd, 1000);
+    if (listen_result == -1) {
         const char* error = strerror(errno);
         printf("%s\n", error);
-        return listenResult;
+        return listen_result;
     }
 
     struct sockaddr_storage their_addr;
@@ -226,18 +228,45 @@ int accept_test() {
     const char* msg_to_send = "hello from the other side.";
     send(connected_fd, msg_to_send, strlen(msg_to_send), 0);
 
+    struct sockaddr_storage their_addr_from_peer;
+    unsigned int sockaddrlen = (unsigned int)sizeof their_addr_from_peer; 
+    int getpeername_result = getpeername(connected_fd, (struct sockaddr*)&their_addr_from_peer, &sockaddrlen);
+    if (getpeername_result == -1) {
+        const char* error = strerror(errno);
+        printf("%s\n", error);
+        return getpeername_result;
+    }
+
+    char dst[100];
+    void * ptr = inet_ntop(AF_INET, &their_addr_from_peer, dst, 100);
+    if (ptr == NULL) {
+        const char* error = strerror(errno);
+        printf("%s\n", error);
+        return 1;
+    }
+
+    // getnameinfo();
+    // gethostbyaddr()    
+
+    // char hostname[100];
+    int max_hostname_length = 100;
+    char* hostname = calloc(sizeof(char*), max_hostname_length);
+    int res = gethostname(hostname,max_hostname_length);
+
     close(connected_fd);
     close(socket_fd);
+
+    free(hostname);
 
     return 0;
 }
 
 int main() {
-    human_to_machine();
-    machine_to_human();
-    make_dns_lookup();
-    socket_test();
-    connect_test();
-    listen_test();
+    // human_to_machine();
+    // machine_to_human();
+    // make_dns_lookup();
+    // socket_test();
+    // connect_test();
+    // listen_test();
     accept_test();
 }

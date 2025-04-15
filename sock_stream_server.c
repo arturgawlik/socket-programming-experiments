@@ -78,8 +78,18 @@ int main() {
         printf("not all bytes were send by 'send' syscall. Bytes send to send: %n and bytes actually send: %n \n", &bytes_send, &msg_to_send_len);
     }
 
-    close(connected_fd);
-    close(socket_fd);
+    int close_res = close(connected_fd);
+    if (close_res == -1) {
+        const char* error = strerror(errno);
+        printf("%s\n", error);
+        return close_res;
+    }
+    close_res = close(socket_fd);
+    if (close_res == -1) {
+        const char* error = strerror(errno);
+        printf("%s\n", error);
+        return close_res;
+    }
 
     return 0;
 }
