@@ -78,7 +78,14 @@ int main() {
   char chunk_buffer[buffer_size];
 
   int bytes_received;
-  int round_trips = 0;
+  /*
+    If there is "0\r\n\r\n" at the end of response it indicates that this is
+    last chunk of response.
+    ("\0" - null terminator is added to properly count string length by
+    `strlen`)
+  */
+  char *end_response_indicator = "0\r\n\r\n\0";
+  int end_response_indicator_length = strlen(end_response_indicator);
   int end = 0;
   do {
     bytes_received = recv(socket_fd, chunk_buffer, buffer_size, 0);
@@ -90,10 +97,8 @@ int main() {
 
     printf("%s", chunk_buffer);
 
-    char *end_indicator = "0\r\n\r\n";
-    int end_indicator_length = strlen(end_indicator);
-    end = memmem(chunk_buffer, buffer_size, end_indicator,
-                 end_indicator_length) != NULL;
+    end = memmem(chunk_buffer, buffer_size, end_response_indicator,
+                 end_response_indicator_length) != NULL;
   } while (!end);
 
   close(socket_fd);
