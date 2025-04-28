@@ -1,5 +1,5 @@
 
-build: build-sock-stream-server build-sock-stream-client build-dgram-server build-dgram-client build-test
+build: build-sock-stream-server build-sock-stream-client build-dgram-server build-dgram-client build-test build-download_full_response
 
 
 build-sock-stream-server:
@@ -15,6 +15,8 @@ build-dgram-server:
 build-dgram-client:
 	clang -g -O0 ./dgram_client.c -o ./out/dgram_client
 
+build-download_full_response:
+	clang -g -O0 ./download_full_response.c -o ./out/download_full_response
 
 build-test:
 	clang -g -O0 ./test.c -o ./out/test
